@@ -1,0 +1,21 @@
+import 'package:flutter/material.dart';
+
+class AddPage extends StatefulWidget {
+  AddPage({Key? key}) : super(key: key);
+
+  @override
+  _AddPageState createState() => _AddPageState();
+}
+
+class _AddPageState extends State<AddPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+       child: Column(
+         children: [
+           Center(child: Text("Ekle")),
+         ],
+       )
+    );
+  }
+}
