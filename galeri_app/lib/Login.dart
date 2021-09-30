@@ -13,7 +13,7 @@ class Login extends StatelessWidget {
     String spUserName = sp.getString("UserName") ?? "Kullanıcı Adı Yok";
     String spPassword = sp.getString("Password") ?? "Şifre Yok";
 
-    if (spUserName == "admin" && spPassword == "123456") {
+    if (spUserName == "admin" && spPassword == "123") {
       return true;
     } else {
       return false;

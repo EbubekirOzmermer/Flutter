@@ -11,8 +11,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  /* final TextEditingController _passwordAgainController =
-      TextEditingController(); */
   final TextEditingController _phoneNumberController = TextEditingController();
   //final TextEditingController _checkController = TextEditingController();
 
@@ -158,34 +156,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         SizedBox(
                           height: size.height * 0.02,
                         ),
-                        /*TextField(
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                            cursorColor: Colors.white,
-                            controller: _passwordAgainController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.vpn_key,
-                                color: Colors.white,
-                              ),
-                              hintText: 'Parola Tekrar',
-                              prefixText: ' ',
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusColor: Colors.white,
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                color: Colors.white,
-                              )),
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                color: Colors.white,
-                              )),
-                            )),
-                        SizedBox(
-                          height: size.height * 0.08,
-                        ), */
+
                         /*CheckboxListTile(
                             activeColor: Colors.black,
                             title: Text(

@@ -1,12 +1,9 @@
-import 'dart:io';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:galeri_app/Login.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path_provider/path_provider.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -31,6 +28,9 @@ class _HomePageState extends State<HomePage> {
   }
   */
 
+  final ImagePicker _picker = ImagePicker();
+  List<XFile> _imageList = [];
+
   Future<void> logout() async {
     var sp = await SharedPreferences.getInstance();
 
@@ -41,58 +41,85 @@ class _HomePageState extends State<HomePage> {
         this.context, MaterialPageRoute(builder: (context) => Login()));
   }
 
-  File? image;
-
-  Future pickImage(ImageSource source) async {
-    try {
-      final image = await ImagePicker().pickImage(source: source);
-      if (image == null) return;
-
-      //final imageTemporary = File(image.path);
-      final imagePermanent = await saveImagePermanently(image.path);
-      setState(() => this.image = imagePermanent);
-    } on PlatformException catch (e) {
-      print("Failed to pick image: $e");
-    }
+  Widget buildGridView() {
+    return GridView.count(
+      crossAxisCount: 2,
+      crossAxisSpacing: 40,
+      scrollDirection: Axis.horizontal,
+      children: List.generate(images.length, (index) {
+        Asset asset = images[index];
+        return Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: Stack(
+            children: [
+              AssetThumb(
+                asset: asset,
+                width: 300,
+                height: 300,
+              ),
+              Positioned(
+                top: -12,
+                right: -12,
+                child: Container(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red[900],
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        images.removeAt(index);
+                      });
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      }),
+    );
   }
 
-  Future<File> saveImagePermanently(String imagePath) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final name = basename(imagePath);
-    final image = File('${directory.path}/$name');
-
-    return File(imagePath).copy(image.path);
-  }
+  List<Asset> images = <Asset>[];
 
   @override
   Widget build(BuildContext context) {
-    var screenInfo = MediaQuery.of(context);
-    final double screenHeight = screenInfo.size.height;
-    final double screenWidth = screenInfo.size.width;
-
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Resimler"),
+        backgroundColor: Colors.green[800],
+      ),
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            SizedBox(
-              height: 70,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Container(
-                child: Row(
-                  children: [
-                    image != null
-                        ? Image.file(
-                            image!,
-                            width: screenWidth / 4,
-                            height: screenHeight / 5,
-                          )
-                        : Text("")
-                  ],
-                ),
-              ),
+            /*Center(
+              child: CarouselSlider.builder(
+                  itemBuilder: (context, index, realIndex) {
+                    final image = images[index];
+
+                    return buildImage(image, index);
+                  },
+                  itemCount: images.length,
+                  options: CarouselOptions(height: 400)),
+            ), */
+
+            Expanded(
+              child: buildGridView(),
+              /*child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemCount: _imageList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Image.file(
+                        File(_imageList[index].path),
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  }), */
             ),
             Spacer(),
             Container(
@@ -100,17 +127,25 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Spacer(),
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.album),
-                    color: Colors.green,
+                    onPressed: () {
+                      //loadAssets();
+                      imageToGallery();
+                    },
+                    icon: Icon(
+                      Icons.album,
+                      color: Colors.green[900],
+                      size: 30,
+                    ),
                   ),
                   Spacer(),
                   IconButton(
                     onPressed: () async {
-                      pickImage(ImageSource.camera);
+                      imageToCamera();
                     },
                     icon: Icon(
                       Icons.camera_alt_rounded,
+                      color: Colors.blue[900],
+                      size: 30,
                     ),
                   ),
                   Spacer(),
@@ -118,7 +153,11 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {
                         logout();
                       },
-                      icon: Icon(Icons.exit_to_app)),
+                      icon: Icon(
+                        Icons.exit_to_app_rounded,
+                        color: Colors.red[900],
+                        size: 30,
+                      )),
                   Spacer(),
                 ],
               )),
@@ -171,4 +210,69 @@ class _HomePageState extends State<HomePage> {
           onTap: _onItemTapped), */
     );
   }
+
+  void imageToCamera() async {
+    final XFile? images = await _picker.pickImage(source: ImageSource.camera);
+    if (images!.path.isNotEmpty) {
+      _imageList.add(images);
+    }
+    setState(() {});
+  }
+
+  void imageToGallery() async {
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 12,
+        selectedAssets: images,
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      if (resultList.length >= 1) {
+        images = resultList;
+      }
+    });
+    /*final XFile? selectedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (selectedImage!.path.isNotEmpty) {
+      _imageList.add(selectedImage);
+    }
+    setState(() {}); */
+  }
+
+  /*Future<void> loadAssets() async {
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        selectedAssets: images,
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      images = resultList;
+    });
+  }  */
+
+  Widget buildImage(String image, int index) => Container(
+        margin: EdgeInsets.symmetric(horizontal: 12),
+        color: Colors.grey,
+        child: Image.network(
+          image,
+          fit: BoxFit.cover,
+        ),
+      );
 }
