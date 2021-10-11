@@ -94,7 +94,6 @@ class _SettingBottomBarState extends State<SettingBottomBar> {
                       label: ""),
                 ],
               ),
-              
             ),
             /********* */
             //DialogMesaj(),

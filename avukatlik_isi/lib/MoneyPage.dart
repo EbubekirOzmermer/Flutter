@@ -21,8 +21,7 @@ class _MoneyPageState extends State<MoneyPage> {
           bottom: TabBar(
             tabs: [
               Tab(
-                text: "Ödemeler", 
-                icon: Icon(Icons.share),
+                text: "Ödemeler",
               ),
               Tab(
                 text: "Kazançlar",
@@ -37,8 +36,7 @@ class _MoneyPageState extends State<MoneyPage> {
             ),
           ),
         ),
-        body: TabBarView(
-          children: [
+        body: TabBarView(children: [
           Kazanc(),
           Kazanc(),
         ]),
