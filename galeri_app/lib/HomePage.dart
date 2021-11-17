@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:galeri_app/Login.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,21 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  /*PageController _pageController = PageController();
-  List<Widget> _screens = [AlbumPage(), AddPage()];
-  int _currentIndex = 0;
-
-  void _onPageChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
- 
-  void _onItemTapped(int selectedIndex) {
-    _pageController.jumpToPage(selectedIndex);
-  }
-  */
-
   final ImagePicker _picker = ImagePicker();
   List<XFile> _imageList = [];
 
@@ -94,32 +78,8 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            /*Center(
-              child: CarouselSlider.builder(
-                  itemBuilder: (context, index, realIndex) {
-                    final image = images[index];
-
-                    return buildImage(image, index);
-                  },
-                  itemCount: images.length,
-                  options: CarouselOptions(height: 400)),
-            ), */
-
             Expanded(
               child: buildGridView(),
-              /*child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
-                  itemCount: _imageList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Image.file(
-                        File(_imageList[index].path),
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  }), */
             ),
             Spacer(),
             Container(
@@ -128,7 +88,6 @@ class _HomePageState extends State<HomePage> {
                   Spacer(),
                   IconButton(
                     onPressed: () {
-                      //loadAssets();
                       imageToGallery();
                     },
                     icon: Icon(
@@ -169,45 +128,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-
-      /*PageView(
-        controller: _pageController,
-        children: _screens,
-        onPageChanged: _onPageChanged,
-        physics: NeverScrollableScrollPhysics(),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: Colors.green,
-          unselectedItemColor: Colors.blueGrey,
-          currentIndex: _currentIndex,
-          items: [
-            BottomNavigationBarItem(
-                icon: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.album),
-                ),
-                label: "Albüm",
-                backgroundColor: Colors.black26),
-            BottomNavigationBarItem(
-                icon: IconButton(
-                  onPressed: () {
-                    pickImage(ImageSource.camera);
-                  },
-                  icon: Icon(Icons.add_a_photo),
-                ),
-                label: "Ekle",
-                backgroundColor: Colors.black26),
-            BottomNavigationBarItem(
-                icon: IconButton(
-                  onPressed: () {
-                    logout();
-                  },
-                  icon: Icon(Icons.exit_to_app),
-                ),
-                label: "Çıkış",
-                backgroundColor: Colors.black26),
-          ],
-          onTap: _onItemTapped), */
     );
   }
 
@@ -239,33 +159,7 @@ class _HomePageState extends State<HomePage> {
         images = resultList;
       }
     });
-    /*final XFile? selectedImage =
-        await _picker.pickImage(source: ImageSource.gallery);
-    if (selectedImage!.path.isNotEmpty) {
-      _imageList.add(selectedImage);
-    }
-    setState(() {}); */
   }
-
-  /*Future<void> loadAssets() async {
-    List<Asset> resultList = <Asset>[];
-    String error = 'No Error Detected';
-
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
-        selectedAssets: images,
-      );
-    } on Exception catch (e) {
-      error = e.toString();
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      images = resultList;
-    });
-  }  */
 
   Widget buildImage(String image, int index) => Container(
         margin: EdgeInsets.symmetric(horizontal: 12),
